@@ -31,6 +31,7 @@ namespace z3y.BuiltIn.ShaderGraph
 
         [SerializeField] public bool surfaceOverride = false;
         [SerializeField] public bool bakeryMonoSH = false;
+        [SerializeField] public bool vrcLightVolumes = false;
         [SerializeField] public bool nonLinearLightMapSH = false;
         [SerializeField] public bool nonLinearLightProbeSH = false;
         [SerializeField] public bool gsaa = false;
@@ -167,6 +168,7 @@ namespace z3y.BuiltIn.ShaderGraph
                 collector.AddFloatProperty("[Toggle(NONLINEAR_LIGHTMAP_SH)]_NonLinearLightMapSH", nonLinearLightMapSH ? 1 : 0, "Non Linear Lightmap SH");
                 collector.AddFloatProperty("[Toggle(NONLINEAR_LIGHTPROBESH)]_NonLinearLightProbeSH", nonLinearLightProbeSH ? 1 : 0, "Non Linear Lightprobe SH");
                 collector.AddFloatProperty("[Toggle(_GEOMETRICSPECULAR_AA)]_GeometricSpecularAAToggle", gsaa ? 1 : 0, "Geometric Specular AA");
+                collector.AddFloatProperty("[Toggle(_VRCLV)]_VRCLightVolumes", vrcLightVolumes ? 1 : 0, "VRC Light Volumes");
                 collector.AddFloatProperty("[Toggle(_ANISOTROPY)]_AnisotropyToggle", anisotropy ? 1 : 0, "Anisotropy");
             }
 
@@ -374,6 +376,7 @@ namespace z3y.BuiltIn.ShaderGraph
                     LitKeywords.DeclareAndAppend(ref result, "NONLINEAR_LIGHTPROBESH", predefined, lit.nonLinearLightProbeSH);
                     LitKeywords.DeclareAndAppend(ref result, "_GEOMETRICSPECULAR_AA", predefined, lit.gsaa);
                     LitKeywords.DeclareAndAppend(ref result, "_ANISOTROPY", predefined, lit.anisotropy);
+                    LitKeywords.DeclareAndAppend(ref result, "_VRCLV", predefined, lit.vrcLightVolumes);
 
                     LitKeywords.DeclareAndAppend(ref result, "_SSR", lit.screenSpaceReflections, true);
                 }

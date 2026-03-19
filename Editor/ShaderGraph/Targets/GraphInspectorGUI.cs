@@ -248,6 +248,10 @@ namespace z3y.BuiltIn.ShaderGraph
             {
                 OnPropertyChangeValidate(ref subTarget.anisotropy, evt, "Change anisotropy");
             });
+            _context.AddProperty("VRC Light Volumes", new Toggle() { value = subTarget.vrcLightVolumes }, (evt) =>
+            {
+                OnPropertyChangeValidate(ref subTarget.vrcLightVolumes, evt, "Change vrcLightVolumes");
+            });
 
 
             _context.AddProperty("SSR", new Toggle() { value = subTarget.screenSpaceReflections }, (evt) =>

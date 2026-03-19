@@ -13,6 +13,10 @@
     #include "Assets/AreaLit/Shader/Lighting.hlsl"
 #endif
 
+#if defined(_VRCLV)
+    #include "Packages/red.sim.lightvolumes/Shaders/LightVolumes.cginc"
+#endif
+
 void GetBTN(Varyings unpacked, SurfaceDescription surfaceDescription, out float3 normalWS, out float3 bitangentWS, out float3 tangentWS)
 {
     float crossSign = (unpacked.tangentWS.w > 0.0 ? 1.0 : -1.0) * GetOddNegativeScale();
@@ -158,6 +162,7 @@ half3 GetLightmap(Varyings unpacked, SurfaceDescription surfaceDescription, Shad
     #endif
     half clampedRoughness = max(sd.perceptualRoughness * sd.perceptualRoughness, 0.002);
     half3 indirectDiffuse = 0;
+
     #if defined(LIGHTMAP_ON)
         float2 lightmapUV = unpacked.lightmapUV.xy;
 
@@ -346,11 +351,21 @@ half4 ComputeForwardLighting(Varyings unpacked, SurfaceDescription surfaceDescri
         giData.Light += unpacked.vertexLight;
     #endif
 
-    #ifndef LIGHTMAP_ON
-        #ifdef VARYINGS_NEED_SH
-            giData.IndirectDiffuse += GetLightProbes(sd.normalWS, unpacked.positionWS, unpacked.sh);
+    #ifdef _VRCLV
+        float3 L0, L1r, L1g, L1b;
+        #ifdef LIGHTMAP_ON
+            LightVolumeAdditiveSH(unpacked.positionWS, L0, L1r, L1g, L1b);
         #else
-            giData.IndirectDiffuse += GetLightProbes(sd.normalWS, unpacked.positionWS, 0);
+            LightVolumeSH(unpacked.positionWS, L0, L1r, L1g, L1b);
+        #endif
+        giData.IndirectDiffuse += LightVolumeEvaluate(sd.normalWS, L0, L1r, L1g, L1b);
+    #else
+        #ifdef LIGHTMAP_ON
+            #ifdef VARYINGS_NEED_SH
+                giData.IndirectDiffuse += GetLightProbes(sd.normalWS, unpacked.positionWS, unpacked.sh);
+            #else
+                giData.IndirectDiffuse += GetLightProbes(sd.normalWS, unpacked.positionWS, 0);
+            #endif
         #endif
     #endif
 
